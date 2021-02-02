@@ -53,7 +53,6 @@ func init() {
 	rootCmd.AddCommand(passwordCmd)
 
 	passwordCmd.Flags().IntVarP(&passwordCount, "count", "c", 1, "Number of passwords to generate")
-	// TODO passwordCmd.Flags().IntVarP(&passwordCount, "exclude", "e", 1, "Exclude characters from generated passwords")
 	passwordCmd.Flags().IntVarP(&passwordLength, "length", "l", 18, "Password length")
 	passwordCmd.Flags().BoolVarP(&passwordIsPin, "pin", "p", false, "Create pin")
 }

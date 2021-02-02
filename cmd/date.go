@@ -35,16 +35,23 @@ func init() {
 	theDate["darwin"] = func() {
 		cmd := exec.Command("date")
 		cmd.Stdout = os.Stdout
-		cmd.Run()
+		if err := cmd.Run(); err != nil {
+			fmt.Println("error:", err)
+		}
 	}
 	theDate["linux"] = func() {
 		cmd := exec.Command("date")
 		cmd.Stdout = os.Stdout
-		cmd.Run()
+		if err := cmd.Run(); err != nil {
+			fmt.Println("error:", err)
+		}
 	}
 	theDate["windows"] = func() {
 		cmd := exec.Command("date", "/t")
 		cmd.Stdout = os.Stdout
-		cmd.Run()
+		if err := cmd.Run(); err != nil {
+			fmt.Println("error:", err)
+		}
 	}
+
 }

@@ -59,7 +59,9 @@ func initConfig() {
 			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 				// Config file not found; ignore error if desired
 				initConfigPath := home + string(os.PathSeparator) + cfgFileName + ".yaml"
-				err = ioutil.WriteFile(initConfigPath, []byte(""), 0666)
+				if err := ioutil.WriteFile(initConfigPath, []byte(""), 0666); err != nil {
+					fmt.Println("error:", err)
+				}
 				fmt.Printf("Config file initialized: %s\n", initConfigPath)
 			} else {
 				// Config file was found but another error was produced
@@ -73,9 +75,10 @@ func initConfig() {
 	// Set defaults for config file
 	viper.SetDefault("author", "NAME HERE <EMAIL ADDRESS>")
 	viper.SetDefault("license", "apache")
-	// TODO viper.SetDefault("verbose", true)
-	// TODO viper.SetDefault("logfile", "logs.log")
-	viper.WriteConfig()
+
+	if err := viper.WriteConfig(); err != nil {
+		fmt.Println("error:", err)
+	}
 
 	viper.AutomaticEnv()
 
