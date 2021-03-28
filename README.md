@@ -23,7 +23,7 @@ The goal of this repo is to create a location for folks to get information they 
 In the end this repo will provide guidance for the following:
 
 - Basic and Advanced CLI examples
-- Continuous integration and continuous deployment
+- Binary releases
 
 ## Getting Started
 
@@ -31,11 +31,9 @@ What things you need to install the software and how to install them
 
 - [golang](https://golang.org/doc/install)
 
-If you want to download and run
+If you want to download and run, the [latest pre-built binaries available](https://github.com/alexbednarczyk/cli-gopher/releases/latest)
 
-- [Latest pre-built binaries available](https://github.com/alexbednarczyk/cli-gopher/releases/latest)
-
-For Linux and MacOS
+For Linux and MacOS with [Gatekeeper enabled](https://support.apple.com/en-us/HT202491)
 ```
 chmod +x <binary file name>
 
@@ -57,9 +55,10 @@ Usage:
   cli-gopher [command]
 
 Available Commands:
-  config      Simple config commands
+  config      Simple config command
   count       A simple count command
   date        A simple date command
+  env         A simple environvment command
   help        Help about any command
   password    A simple password command
   version     The version number of cli-gopher
