@@ -13,13 +13,13 @@ import (
 var (
 	envPrefix      string
 	envEnvironment int
-	specs          []Environment
+	specs          []environment
 )
 
-type Environment struct {
-	Debug    bool    `envconfig:"DEBUG" default:true`
-	LogLevel int8    `envconfig:"LOG_LEVEL" default:1`
-	Rate     float64 `envconfig:"RATE" default:2.4`
+type environment struct {
+	Debug    bool    `envconfig:"DEBUG"`
+	LogLevel int8    `envconfig:"LOG_LEVEL"`
+	Rate     float64 `envconfig:"RATE"`
 }
 
 var envCmd = &cobra.Command{
@@ -32,7 +32,7 @@ var envCmd = &cobra.Command{
 
 func getAndDisplayEnv(cm *cobra.Command, args []string) {
 
-	var e Environment
+	var e environment
 
 	if len(specs)-1 >= envEnvironment {
 		e = specs[envEnvironment]
@@ -59,6 +59,6 @@ func init() {
 	envCmd.Flags().StringVarP(&envPrefix, "prefix", "p", "", "Will use prefixed environment variable if it is set")
 	envCmd.Flags().IntVarP(&envEnvironment, "environment", "e", 0, "Environment for environment variables")
 
-	specs = append(specs, Environment{Debug: true, LogLevel: 1, Rate: 1.2})
-	specs = append(specs, Environment{Debug: false, LogLevel: 2, Rate: 2.3})
+	specs = append(specs, environment{Debug: true, LogLevel: 1, Rate: 1.2})
+	specs = append(specs, environment{Debug: false, LogLevel: 2, Rate: 2.3})
 }
