@@ -58,9 +58,10 @@ Available Commands:
   config      Simple config command
   count       A simple count command
   date        A simple date command
-  env         A simple environvment command
+  env         A simple environment command
   help        Help about any command
   password    A simple password command
+  spinner     A simple spinner command
   version     The version number of cli-gopher
 
 Flags:
