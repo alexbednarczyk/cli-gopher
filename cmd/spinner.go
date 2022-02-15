@@ -37,7 +37,7 @@ func displaySpinner(cm *cobra.Command, args []string) {
 	}
 
 	fmt.Println("Press Enter to quit")
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	_, _ = bufio.NewReader(os.Stdin).ReadBytes('\n')
 	quit <- true
 	ticker.Stop()
 }
