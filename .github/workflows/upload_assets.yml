@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.15.x
+          go-version: 1.20.x
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: build
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
@@ -39,10 +39,10 @@ jobs:
           echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
 
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Download build artefacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: binaries
           path: bin/

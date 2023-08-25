@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -47,7 +46,7 @@ func initConfig() {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found
 			initConfigPath := "./" + string(os.PathSeparator) + cfgFileName + ".yaml"
-			if err := ioutil.WriteFile(initConfigPath, []byte(""), 0666); err != nil {
+			if err := os.WriteFile(initConfigPath, []byte(""), 0666); err != nil {
 				fmt.Println("error:", err)
 			}
 			// Set defaults for config file
