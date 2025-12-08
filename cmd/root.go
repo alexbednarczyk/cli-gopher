@@ -1,15 +1,16 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	version     string
+	version     = "dev"
+	cfgFile     string
 	cfgFileName = ".gopher"
 )
 
@@ -17,55 +18,44 @@ var rootCmd = &cobra.Command{
 	Use:   "cli-gopher",
 	Short: "Example cli tool based on golang",
 	Long:  `Example cli tool based on golang!`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return initConfig()
+	},
 }
 
 // Execute function
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func Execute() error {
+	rootCmd.SilenceUsage = true
+	rootCmd.SilenceErrors = true
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	return rootCmd.Execute()
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is .gopher.yaml in current directory)")
 }
 
-func er(msg interface{}) {
-	fmt.Println("Error:", msg)
-	os.Exit(1)
-}
+func initConfig() error {
+	viper.SetEnvPrefix("GOPHER")
+	viper.AutomaticEnv()
+	viper.SetDefault("author", "NAME HERE <EMAIL ADDRESS>")
+	viper.SetDefault("license", "apache")
 
-func initConfig() {
-	// Search config in present working directory with name ".gopher" (without extension).
-	viper.AddConfigPath("./")
-	viper.SetConfigName(cfgFileName)
-	viper.SetConfigType("yaml")
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.AddConfigPath("./")
+		viper.SetConfigName(cfgFileName)
+		viper.SetConfigType("yaml")
+	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found
-			initConfigPath := "./" + string(os.PathSeparator) + cfgFileName + ".yaml"
-			if err := os.WriteFile(initConfigPath, []byte(""), 0666); err != nil {
-				fmt.Println("error:", err)
-			}
-			// Set defaults for config file
-			viper.SetDefault("author", "NAME HERE <EMAIL ADDRESS>")
-			viper.SetDefault("license", "apache")
-			fmt.Printf("Config file initialized: %s\n", initConfigPath)
-		} else {
-			// Config file was found but another error was produced
-			er(err)
+		var cfgErr viper.ConfigFileNotFoundError
+		if errors.As(err, &cfgErr) {
+			return nil
 		}
+		return fmt.Errorf("read config: %w", err)
 	}
 
-	if err := viper.WriteConfig(); err != nil {
-		fmt.Println("error:", err)
-	}
-
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	return nil
 }

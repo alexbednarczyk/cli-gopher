@@ -29,7 +29,7 @@ In the end this repo will provide guidance for the following:
 
 What things you need to install the software and how to install them
 
-- [golang](https://golang.org/doc/install)
+- [golang 1.22+](https://golang.org/doc/install)
 
 If you want to download and run, the [latest pre-built binaries available](https://github.com/alexbednarczyk/cli-gopher/releases/latest)
 
@@ -45,7 +45,7 @@ chmod +x <binary file name>
 A list of available commands
 
 ```
-go run main.go
+go run .
 ```
 
 ```
@@ -74,6 +74,9 @@ Use "cli-gopher [command] --help" for more information about a command.
 
 Build binary locally on OSX
 `CGO_ENABLED=0 go build -ldflags="-X 'github.com/alexbednarczyk/cli-gopher/cmd.version=$(date +%Y.%U.%j)' -w -s" -v -o cli-gopher .`
+
+Run the test suite
+`go test ./...`
 
 ## Built With
 
