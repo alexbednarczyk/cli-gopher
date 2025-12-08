@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/alexbednarczyk/cli-gopher/internal/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var configCmd = &cobra.Command{
@@ -13,23 +12,21 @@ var configCmd = &cobra.Command{
 	Short: "Simple config command",
 	Long:  `Simple command that enables the user to read/write the cli-gopher config file`,
 	Args:  cobra.NoArgs,
-	Run:   config,
+	Run:   runConfig,
 }
 
-func config(cm *cobra.Command, args []string) {
+func runConfig(cm *cobra.Command, args []string) {
 
 	if len(args) == 0 {
-		completeConfig := viper.AllSettings()
-
-		if b, err := json.MarshalIndent(completeConfig, "", " "); err != nil {
+		s, err := config.GetConfigString()
+		if err != nil {
 			fmt.Println("error:", err)
 		} else {
-			fmt.Printf("\n%s\n", string(b))
+			fmt.Printf("\n%s\n", s)
 		}
 	}
 
 }
-
 func init() {
 	rootCmd.AddCommand(configCmd)
 }

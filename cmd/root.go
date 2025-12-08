@@ -9,7 +9,6 @@ import (
 )
 
 var (
-	version     string
 	cfgFileName = ".gopher"
 )
 

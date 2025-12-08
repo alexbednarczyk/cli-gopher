@@ -3,9 +3,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"math"
 	"strconv"
 
+	"github.com/alexbednarczyk/cli-gopher/internal/count"
 	"github.com/spf13/cobra"
 )
 
@@ -28,15 +28,14 @@ var countCmd = &cobra.Command{
 
 func countToInt(cm *cobra.Command, args []string) {
 	floatCount, _ := strconv.ParseFloat(args[0], 64)
-	countTo := int(math.Abs(floatCount))
+	result := count.CountToInt(floatCount)
 
 	fmt.Printf("\n")
-	for i := 0; i <= countTo; i++ {
+	for _, i := range result {
 		fmt.Printf("%d ", i)
 	}
 	fmt.Printf("\n")
 }
-
 func init() {
 	rootCmd.AddCommand(countCmd)
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/alexbednarczyk/cli-gopher/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +13,7 @@ var versionCmd = &cobra.Command{
 	Long:  `All software has versions. This is cli-gopher's`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("cli-gopher v" + version)
+		fmt.Println("cli-gopher v" + version.Version)
 	},
 }
 

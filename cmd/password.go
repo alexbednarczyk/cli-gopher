@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/alexbednarczyk/cli-gopher/internal/password"
 	"github.com/spf13/cobra"
-	"go.1password.io/spg"
 )
 
 var (
@@ -21,34 +21,20 @@ var passwordCmd = &cobra.Command{
 }
 
 func passwordGenerator(cm *cobra.Command, args []string) {
-	var r spg.CharRecipe
-	if passwordIsPin {
-		r = spg.CharRecipe{
-			Length: passwordLength,
-			Allow:  spg.Digits,
-		}
-	} else {
-		r = spg.CharRecipe{
-			Length:  passwordLength,
-			Allow:   spg.Lowers | spg.Digits,
-			Exclude: spg.Ambiguous,
-		}
+	opts := password.GenerateOptions{
+		Count:  passwordCount,
+		Length: passwordLength,
+		IsPin:  passwordIsPin,
 	}
 
-	for i := 0; i < passwordCount; i++ {
-		p, err := r.Generate()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		if passwordIsPin {
-			fmt.Printf("Pin: %q\tEntropy: %.3f\n", p, p.Entropy)
-		} else {
-			fmt.Printf("Password: %q\tEntropy: %.3f\n", p, p.Entropy)
-		}
+	passwords, err := password.Generate(opts)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	password.FormatOutput(passwords)
 }
-
 func init() {
 	rootCmd.AddCommand(passwordCmd)
 
