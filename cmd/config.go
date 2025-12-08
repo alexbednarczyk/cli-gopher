@@ -13,21 +13,19 @@ var configCmd = &cobra.Command{
 	Short: "Simple config command",
 	Long:  `Simple command that enables the user to read/write the cli-gopher config file`,
 	Args:  cobra.NoArgs,
-	Run:   config,
+	RunE:  config,
 }
 
-func config(cm *cobra.Command, args []string) {
+func config(cm *cobra.Command, args []string) error {
+	completeConfig := viper.AllSettings()
 
-	if len(args) == 0 {
-		completeConfig := viper.AllSettings()
-
-		if b, err := json.MarshalIndent(completeConfig, "", " "); err != nil {
-			fmt.Println("error:", err)
-		} else {
-			fmt.Printf("\n%s\n", string(b))
-		}
+	b, err := json.MarshalIndent(completeConfig, "", " ")
+	if err != nil {
+		return fmt.Errorf("marshal config: %w", err)
 	}
 
+	fmt.Fprintf(cm.OutOrStdout(), "\n%s\n", string(b))
+	return nil
 }
 
 func init() {

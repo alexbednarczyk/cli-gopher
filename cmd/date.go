@@ -2,56 +2,28 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
-	"runtime"
+	"time"
 
 	"github.com/spf13/cobra"
 )
-
-var theDate map[string]func()
 
 var dateCmd = &cobra.Command{
 	Use:   "date",
 	Short: "A simple date command",
 	Long:  `A simple date command that displays today's date`,
 	Args:  cobra.NoArgs,
-	Run:   todaysDate,
+	RunE:  todaysDate,
 }
 
-func todaysDate(cm *cobra.Command, args []string) {
-	value, ok := theDate[runtime.GOOS]
-	if ok {
-		value()
-	} else {
-		fmt.Println("Platform is unsupported! Can't display date for " + runtime.GOOS)
-	}
+var dateFormat string
+
+func todaysDate(cm *cobra.Command, args []string) error {
+	now := time.Now().Format(dateFormat)
+	fmt.Fprintln(cm.OutOrStdout(), now)
+	return nil
 }
 
 func init() {
 	rootCmd.AddCommand(dateCmd)
-
-	theDate = make(map[string]func())
-	theDate["darwin"] = func() {
-		cmd := exec.Command("date")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-	theDate["linux"] = func() {
-		cmd := exec.Command("date")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-	theDate["windows"] = func() {
-		cmd := exec.Command("date", "/t")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-
+	dateCmd.Flags().StringVar(&dateFormat, "format", "2006-01-02", "Go time format for date output")
 }

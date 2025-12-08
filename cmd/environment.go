@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/kelseyhightower/envconfig"
@@ -24,33 +23,36 @@ type environment struct {
 
 var envCmd = &cobra.Command{
 	Use:   "env",
-	Short: "A simple environvment command",
-	Long:  `A simple environvment command that displays environment variables`,
+	Short: "A simple environment command",
+	Long:  `A simple environment command that displays environment variables`,
 	Args:  cobra.NoArgs,
-	Run:   getAndDisplayEnv,
+	RunE:  getAndDisplayEnv,
 }
 
-func getAndDisplayEnv(cm *cobra.Command, args []string) {
-
+func getAndDisplayEnv(cm *cobra.Command, args []string) error {
 	var e environment
 
-	if len(specs)-1 >= envEnvironment {
+	if envEnvironment >= 0 && len(specs)-1 >= envEnvironment {
 		e = specs[envEnvironment]
 	} else {
-		fmt.Println("Environment not found, using default")
+		fmt.Fprintln(cm.ErrOrStderr(), "Environment not found, using default")
 		e = specs[0]
 	}
 
 	err := envconfig.Process(envPrefix, &e)
 	if err != nil {
-		log.Fatal(err.Error())
+		return fmt.Errorf("read environment variables: %w", err)
 	}
 
 	s, _ := json.Marshal(e)
 	unJSONify := strings.NewReplacer("{", "", "}", "", ",", "\n", "\"", "")
 	output := unJSONify.Replace(string(s))
-	fmt.Printf("------------\nKey:Value\n------------\n")
-	fmt.Println(output)
+	writer := cm.OutOrStdout()
+	fmt.Fprintln(writer, "------------")
+	fmt.Fprintln(writer, "Key:Value")
+	fmt.Fprintln(writer, "------------")
+	fmt.Fprintln(writer, output)
+	return nil
 }
 
 func init() {

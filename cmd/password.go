@@ -17,11 +17,19 @@ var passwordCmd = &cobra.Command{
 	Use:   "password",
 	Short: "A simple password command",
 	Long:  `A simple password command that uses 1Password's spg golang library. http://github.com/1Password/spg`,
-	Run:   passwordGenerator,
+	RunE:  passwordGenerator,
 }
 
-func passwordGenerator(cm *cobra.Command, args []string) {
+func passwordGenerator(cm *cobra.Command, args []string) error {
 	var r spg.CharRecipe
+
+	if passwordLength <= 0 {
+		return fmt.Errorf("length must be positive")
+	}
+	if passwordCount <= 0 {
+		return fmt.Errorf("count must be positive")
+	}
+
 	if passwordIsPin {
 		r = spg.CharRecipe{
 			Length: passwordLength,
@@ -35,18 +43,19 @@ func passwordGenerator(cm *cobra.Command, args []string) {
 		}
 	}
 
+	writer := cm.OutOrStdout()
 	for i := 0; i < passwordCount; i++ {
 		p, err := r.Generate()
 		if err != nil {
-			fmt.Println(err)
-			return
+			return fmt.Errorf("generate password: %w", err)
 		}
 		if passwordIsPin {
-			fmt.Printf("Pin: %q\tEntropy: %.3f\n", p, p.Entropy)
+			fmt.Fprintf(writer, "Pin: %q\tEntropy: %.3f\n", p, p.Entropy)
 		} else {
-			fmt.Printf("Password: %q\tEntropy: %.3f\n", p, p.Entropy)
+			fmt.Fprintf(writer, "Password: %q\tEntropy: %.3f\n", p, p.Entropy)
 		}
 	}
+	return nil
 }
 
 func init() {
