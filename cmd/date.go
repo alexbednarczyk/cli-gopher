@@ -2,14 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
-	"runtime"
-
+	"github.com/alexbednarczyk/cli-gopher/internal/date"
 	"github.com/spf13/cobra"
 )
-
-var theDate map[string]func()
 
 var dateCmd = &cobra.Command{
 	Use:   "date",
@@ -20,38 +15,12 @@ var dateCmd = &cobra.Command{
 }
 
 func todaysDate(cm *cobra.Command, args []string) {
-	value, ok := theDate[runtime.GOOS]
-	if ok {
-		value()
-	} else {
-		fmt.Println("Platform is unsupported! Can't display date for " + runtime.GOOS)
+	executor := &date.RealExecutor{}
+	if err := date.DisplayDate(executor); err != nil {
+		fmt.Println("error:", err)
 	}
 }
 
 func init() {
 	rootCmd.AddCommand(dateCmd)
-
-	theDate = make(map[string]func())
-	theDate["darwin"] = func() {
-		cmd := exec.Command("date")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-	theDate["linux"] = func() {
-		cmd := exec.Command("date")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-	theDate["windows"] = func() {
-		cmd := exec.Command("date", "/t")
-		cmd.Stdout = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Println("error:", err)
-		}
-	}
-
 }
